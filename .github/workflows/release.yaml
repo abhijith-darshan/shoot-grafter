@@ -22,9 +22,17 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v6
 
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Create release and generate release notes
         uses: actions/github-script@v8
         with:
+          github-token: ${{ steps.app-token.outputs.token }}
           script: |
             await github.rest.repos.createRelease({
               owner: context.repo.owner,
